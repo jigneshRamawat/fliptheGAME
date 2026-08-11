@@ -76,7 +76,7 @@ return [...arr].sort(() => Math.random() - 0.5)
 
 function App() {
 
-const [currentIndex , setCurrentIndex] = useState(randomQ(questions[currentIndex].q));
+const [currentIndex , setCurrentIndex] = useState(randomQ(questions));
 const [Score , setScore] = useState(0);
 const [SelectedAns ,setSelectedAns] = useState(null);
 const [ShowScore , setShowScore] = useState(false)
@@ -90,7 +90,7 @@ const handleClick = (ans)=>{
 };
 
 const handleNext = ()=>{
-  const nextI = randomQ(questions[currentIndex].q);
+  const nextI = randomQ(questions[currentIndex]);
   if(nextI < questions.length){
     setCurrentIndex(nextI);
     setSelectedAns(null);
