@@ -76,7 +76,11 @@ return [...arr].sort(() => Math.random() - 0.5)
 
 function App() {
 
-const [currentIndex , setCurrentIndex] = useState(randomQ(questions));
+    const [RandomQuestions, setRandomQuestions] = useState(() =>
+    randomQ(questions)
+  );
+
+const [currentIndex , setCurrentIndex] = useState(0);
 const [Score , setScore] = useState(0);
 const [SelectedAns ,setSelectedAns] = useState(null);
 const [ShowScore , setShowScore] = useState(false)
@@ -90,9 +94,8 @@ const handleClick = (ans)=>{
 };
 
 const handleNext = ()=>{
-  const nextI = randomQ(questions[currentIndex]);
-  if(nextI < questions.length){
-    setCurrentIndex(nextI);
+  if(currentIndex < RandomQuestions.length-1){
+    setCurrentIndex((back) => back + 1);
     setSelectedAns(null);
   }else{
     setShowScore(true);
@@ -101,7 +104,8 @@ const handleNext = ()=>{
 
 const handleRestart = () => {
   
-    setCurrentIndex(randomQ(questions[currentIndex].q));
+    setRandomQuestions(randomQ(questions));
+    setCurrentIndex(0);
     setScore(0);
     setSelectedAns(null);
     setShowScore(false);
@@ -120,7 +124,7 @@ return (
         {ShowScore ? (
           <div>
             <h3 className="question">
-              Your Score is: {Score} out of {questions.length}
+              Your Score is: {Score} out of {RandomQuestions.length}
             </h3>
             <button
               className="nextbtn"
@@ -133,11 +137,11 @@ return (
         ) : (
           <div>
             <h3 className="question">
-              {currentIndex + 1}. {questions[currentIndex].q}
+              {currentIndex + 1}. {RandomQuestions[currentIndex].q}
             </h3>
 
             <div className="option">
-              {questions[currentIndex].answers.map((ans, i) => {
+              {RandomQuestions[currentIndex].answers.map((ans, i) => {
                 let btnClass = "btn";
                 if (SelectedAns !== null) {
                   if (ans.correct) {
@@ -166,7 +170,7 @@ return (
                 style={{ display: 'block' }}
                 onClick={handleNext}
               >
-                {currentIndex === questions.length - 1 ? "Finish" : "Next"}
+                {currentIndex === RandomQuestions.length - 1 ? "Finish" : "Next"}
               </button>
             )}
           </div>
