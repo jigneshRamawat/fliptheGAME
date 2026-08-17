@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import './App.css'
+import React, { useState } from 'react'
+
+
 const questions = [
     {
         q: "Which is the smallest continent in the world?",
@@ -71,41 +72,36 @@ const randomValue = (arr)=>{
 }
 const result = randomValue(questions)
 
-
-
-function App() {
- const [randomQuestion , setRandomQuestions] = useState(randomValue(questions))
-    const [score, setScore] = useState(0);
-    const [quizFinished, setQuizFinished] = useState(false);
+function test() {
+    const [randomQuestion , setRandomQuestions] = useState(result)
+    const [score , SetScore] = useState(false)
     const [SelectedAns, setSelectedAns]= useState(null)
-    const [ currentIndex , setCurrentIndex] = useState(0)
+    const [ currentIndex , setCurrentIndex] = useState(result[0])
 
-const handleClick = (ans) => {
-    if (SelectedAns !== null) return;
-
-    setSelectedAns(ans);
-
-    if (ans.correct) {
-        setScore((prev) => prev + 1);
-    }
-};
+    const handleClick =(ans)=>{
+        if(SelectedAns !== null) return;
+        setSelectedAns(ans);
+        if(ans.correct){
+            SetScore((p)=> p+1)
+        };
+    };
 
     const handleNext = ()=>{
         if(currentIndex < randomQuestion.length-1){
             setCurrentIndex((p)=> p+1);
             setSelectedAns(null);
         }else{
-            setQuizFinished(true);
+            SetScore(true);
         }
 
     };
 
     const handleRestart = ()=>{
-    setCurrentIndex(0);
-    setScore(0);
-    setQuizFinished(false);
-    setSelectedAns(null);
-    setRandomQuestions(randomValue(questions));
+        setCurrentIndex(0);
+        SetScore(false);
+        setRandomQuestions(result);
+        setSelectedAns(null)
+        score(0)
     }
 
   return (
@@ -113,8 +109,8 @@ const handleClick = (ans) => {
         <div className="title">
             <h2>Play Quiz</h2>
         </div>
-     { quizFinished ? (
-     <div className=""> <h1 className='question'>Your Score Is : {score} Out Of : {randomQuestion.length} </h1> 
+     { score ? (
+     <div className=""> <h1 className='question'>Your Score Is : Out Of </h1> 
       <button className='nextbtn'
       style={{display: ' block'}}
       onClick={handleRestart}
@@ -131,9 +127,9 @@ const handleClick = (ans) => {
             let btnClass = "btn";
             if(SelectedAns !== null){
                 if(ans.correct){
-                    btnClass += " correct";
+                    btnClass += "correct";
                 }else if( SelectedAns === ans){
-                    btnClass += " Wrong";
+                    btnClass += "Wrong";
                 }
             }
 
@@ -143,7 +139,7 @@ const handleClick = (ans) => {
                 className={btnClass}
                 onClick={()=> handleClick(ans)}
                 disabled = {SelectedAns !== null}
-                >{ans.text}</button>
+                >{ans.test}</button>
             );
          })}
         </div>
@@ -163,4 +159,5 @@ const handleClick = (ans) => {
 
   );
 }
-export default App;
+
+export default test

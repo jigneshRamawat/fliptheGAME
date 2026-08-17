@@ -1,0 +1,185 @@
+import React, { useEffect, useState } from "react";
+
+import img1 from "../src/img/quiz1.jpg";
+import img2 from "../src/img/quiz2.jpg";
+import img3 from "../src/img/quiz3.jpg";
+import img4 from "../src/img/quiz4.jpg";
+import imgQ from "../src/img/mark.jpg";
+
+const images = [img1, img2, img3, img4];
+
+const createCards = () => {
+  const cards = [...images, ...images];
+
+  return cards
+    .map((img, index) => ({
+      id: index,
+      img,
+      matched: false,
+    }))
+    .sort(() => Math.random() - 0.5);
+};
+
+function Game() {
+  const [start, setStart] = useState(false);
+  const [cards, setCards] = useState([]);
+  const [firstCard, setFirstCard] = useState(null);
+
+  const [secondCard, setSecondCard] = useState(null);
+  const [disabled, setDisabled] = useState(false);
+
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+
+  const [gameOver, setGameOver] = useState(false);
+
+  const [isWon, setIsWon] = useState(false);
+
+  const startGame = () => {
+    setCards(createCards());
+
+    setStart(true);
+    setScore(0);
+    setTimeLeft(60);
+    setFirstCard(null);
+    setSecondCard(null);
+    setDisabled(false);
+    setGameOver(false);
+
+    setIsWon(false);
+  };
+
+  useEffect(() => {
+    if (!start || gameOver || isWon) return;
+
+    if (timeLeft <= 0) {
+      setGameOver(true);
+      setStart(false);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [start, gameOver, isWon, timeLeft]);
+
+  const handleCardClick = (card) => {
+    if (disabled || !start || card.matched || card.id === firstCard?.id) return;
+    if (!firstCard) {
+      setFirstCard(card);
+    } else {
+      setSecondCard(card);
+    }
+  };
+
+  useEffect(() => {
+  console.log("first", firstCard)
+
+  console.log("seco", secondCard)
+
+}, [firstCard, secondCard]);
+
+  useEffect(() => {
+    if (!firstCard || !secondCard) return;
+       setDisabled(true);
+
+    if (firstCard.img === secondCard.img) {
+      setCards((prev) =>
+        prev.map((card) =>
+          card.img === firstCard.img ? { ...card, matched: true } : card,
+        ),
+      );
+
+      setScore((prevScore) => {
+        const newScore = prevScore + 1;
+
+        if (newScore === images.length) {
+          setIsWon(true);
+          setStart(false);
+        }
+
+        return newScore;
+      });
+
+      Again();
+    } else {
+      const timer = setTimeout(() => {
+        Again();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [firstCard, secondCard]);
+
+  const Again = () => {
+    setFirstCard(null);
+    setSecondCard(null);
+    setDisabled(false);
+  };
+
+
+
+
+
+  return (
+    <div className="flex flex-col items-center justify-center text-center p-4">
+      <h1 className="text-4xl font-bold text-white mt-1">
+        Memory Matching Game
+      </h1>
+
+      <button
+        onClick={startGame}
+        className="w-40 h-14 mt-5 rounded-full bg-white hover:bg-gray-200 text-xl text-black font-bold cursor-pointer transition"
+      >
+        {start ? "Restart" : "Start"}
+      </button>
+
+      {isWon && (
+        <h2 className="text-3xl text-green-400 font-bold mt-4">
+          You Won in {60 - timeLeft}s!
+        </h2>
+      )}
+
+      {gameOver && !isWon && (
+        <h2 className="text-3xl text-red-400 font-bold mt-4">
+          Time's Up! Final Score: {score}
+        </h2>
+      )}
+
+      {(start || isWon) && (
+        <div className="w-full px-4 sm:px-6 lg:px-10 mt-6">
+          <div className="flex justify-center gap-8 mb-4">
+            <h2 className="text-2xl font-bold text-white">Time: {timeLeft}s</h2>
+            <h2 className="text-2xl font-bold text-white">Score: {score}</h2>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {cards.map((card) => {
+              const isOpen =
+                card.id === firstCard?.id ||
+                card.id === secondCard?.id ||
+                card.matched;
+
+              return (
+                <div
+                  key={card.id}
+                  onClick={() => handleCardClick(card)}
+                  className="w-full aspect-square bg-gray-400 rounded-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-200"
+                >
+                  <img
+                    className="w-full h-full object-cover"
+                    src={isOpen ? card.img : imgQ}
+                    alt="card"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default Game;

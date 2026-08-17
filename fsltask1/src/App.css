@@ -1,4 +1,4 @@
-
+/* 
 .main{
     width: 90%;
     background-color:rgb(205, 189, 253);
@@ -17,15 +17,18 @@
 .question{
     padding: 20px 0;
 }
-.question h3 {
-   font-size: 23px;
-   font-weight: 600;
+.question {
+    font-size: 23px;
+    font-weight: 600;
+    padding: 20px 0;
 }
-.btn{
+.btn {
     background-color: white;
     color: #222;
     font-weight: 500;
     width: 100%;
+    min-height: 45px;
+    box-sizing: border-box;
     border: 1px solid #222;
     padding: 10px;
     margin: 10px 0;
@@ -33,6 +36,16 @@
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.5s;
+}
+
+.correct {
+    background-color: greenyellow;
+    color: #000;
+}
+
+.Wrong {
+    background-color: red;
+    color: #fff;
 }
 .btn:hover:not([disabled]){
     background-color: #222;
@@ -50,14 +63,4 @@
     cursor: pointer;
     border-radius: 6px;
     display: none;
-}
-
-.btn.correct {
-    background-color: greenyellow;
-    color: #000;
-}
-
-.btn.Wrong {
-    background-color: red;
-    color: #fff;
-}
+} */
