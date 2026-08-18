@@ -24,47 +24,167 @@ function Game() {
   const [start, setStart] = useState(false);
   const [cards, setCards] = useState([]);
   const [firstCard, setFirstCard] = useState(null);
-
   const [secondCard, setSecondCard] = useState(null);
   const [disabled, setDisabled] = useState(false);
-
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
-
   const [gameOver, setGameOver] = useState(false);
-
   const [isWon, setIsWon] = useState(false);
-
-
   const [hide, setHide] = useState(false);
 
-
-  const [email, setEmail] = useState("");
+const [email, setEmail] = useState("");
+const [username, setUsername] = useState("");
 const [password, setPassword] = useState("");
-const [LoggedIn, setLoggedIn] = useState(false);
+  const [LoggedIn, setLoggedIn] = useState(false);
+  const [winner , setWinner] = useState(null)
+  const [isRegister, setIsRegister] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  
+  
+  const API_URL = "https://flipthegame.onrender.com";
 
+  const handleLogin = async () => {
+     try{
 
-const handleLogin =async ()=>{
-  try{
-    const resp = await axios.post("https://flipthegame.onrender.com/login",{email: email, password:password});
-    console.log(resp)
+      const resp = await axios.post(`${API_URL}/login`,{email,password})
+
+      console.log("login", resp.data);
+      setLoggedIn(true);
+      localStorage.setItem(
+        "UserLogindata",
+        JSON.stringify(resp.data.user)
+      )
+      alert(resp.data.message);
+      setCurrentUser(resp.data.user);
+      startGame();
+      
+    
+    }catch(error){
+       console.error("Login error:", error);
+
+    setLoggedIn(false);
+
+    alert(
+      error.response?.data?.message ||
+      "Login failed"
+    );
+     }
+  };
+
+  useEffect(() => {
+  const savedUser = localStorage.getItem("UserLogindata");
+
+  if (savedUser) {
+    const user = JSON.parse(savedUser);
+
+    setCurrentUser(user);
     setLoggedIn(true);
-    alert(resp.data.message); 
-    startGame();
-  }catch(error){
-    console.error("Login error:", error);
-    setLoggedIn(false)
-    alert(error.response?.data?.message);
   }
-}
+
+  howWin();
+}, []);
+  const handleRegister = async()=>{
+    try{
+      const resp = await axios.post(`${API_URL}/register`, {
+        email,
+      username,
+      password,
+      })
+
+      console.log("Register response:", resp.data);
+       alert(resp.data.message);
+
+    setIsRegister(false);
+    setPassword("");
+    }catch(error){
+        console.error("Register error:", error);
+
+    alert(
+      error.response?.data?.message ||
+      "Registration failed"
+    );
+    }
+  }
 
 
 
+const setScoreinbackend = async (quickwon, finalScore) => {
+  try {
+
+    const resp = await axios.post(
+      `${API_URL}/score`,
+      {
+        email: currentUser?.email,
+        score: finalScore,
+        time: quickwon,
+      }
+    );
+
+    console.log("Backend score:", resp.data);
+
+    setCurrentUser(resp.data.user);
+
+    howWin();
+
+  } catch (error) {
+    console.error("Score error:", error);
+  }
+};
+
+const howWin = async () => {
+  try {
+    const res = await axios.get(`${API_URL}/data`);
+    const players = res.data.data;
+    console.log(players)
+
+    if (players.length === 0) {
+      console.log("No players found");
+      return;
+    }
+
+    const winner = players.reduce((best, player) => {
+      if (player.score > best.score) {
+        return player;
+      }
+      if (
+        player.score === best.score &&
+        player.time < best.time
+      ) {
+        return player;
+      }
+      return best;
+    });
+    setWinner(winner)
+    console.log("Winner:", winner);
+
+  } catch (err) {
+    console.error("Error:", err);
+  }
+};
+
+
+
+
+// const settimeinbackend = async(quickWon)=>{
+//   try{
+//        const resp = await axios.post("http://localhost:3000/time",{
+//         time: quickWon,
+//        });
+
+//   }catch(err){
+//     console.log(err)
+//   }
+
+// }
 const handleLogout = () => {
+
   setLoggedIn(false);
 
-  setStart(false);
+  setCurrentUser(null);
 
+  localStorage.removeItem("user");
+
+  setStart(false);
   setCards([]);
   setFirstCard(null);
   setSecondCard(null);
@@ -74,6 +194,7 @@ const handleLogout = () => {
   setIsWon(false);
 
   setEmail("");
+  setUsername("");
   setPassword("");
 
   alert("Logged out successfully");
@@ -81,7 +202,6 @@ const handleLogout = () => {
 
   const startGame = () => {
     setCards(createCards());
-
     setStart(true);
     setScore(0);
     setTimeLeft(60);
@@ -91,6 +211,7 @@ const handleLogout = () => {
     setGameOver(false);
 
     setIsWon(false);
+    howWin();
   };
 
   useEffect(() => {
@@ -99,16 +220,14 @@ const handleLogout = () => {
     if (timeLeft <= 0) {
       setGameOver(true);
       setStart(false);
+     setScoreinbackend(60 - timeLeft, score);
       return;
     }
-
     const timer = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
     }, 1000);
-
     return () => clearInterval(timer);
   }, [start, gameOver, isWon, timeLeft]);
-
   const handleCardClick = (card) => {
     if (disabled || !start || card.matched || card.id === firstCard?.id) return;
     if (!firstCard) {
@@ -117,17 +236,15 @@ const handleLogout = () => {
       setSecondCard(card);
     }
   };
-
   useEffect(() => {
-  console.log("first", firstCard)
+    console.log("first", firstCard);
 
-  console.log("seco", secondCard)
-
-}, [firstCard, secondCard]);
+    console.log("seco", secondCard);
+  }, [firstCard, secondCard]);
 
   useEffect(() => {
     if (!firstCard || !secondCard) return;
-       setDisabled(true);
+    setDisabled(true);
 
     if (firstCard.img === secondCard.img) {
       setCards((prev) =>
@@ -141,9 +258,10 @@ const handleLogout = () => {
 
         if (newScore === images.length) {
           setIsWon(true);
+          const time = 60 - timeLeft;
+          setScoreinbackend(time,newScore);
           setStart(false);
         }
-
         return newScore;
       });
 
@@ -162,36 +280,50 @@ const handleLogout = () => {
     setDisabled(false);
   };
 
-
-
-
-
   return (
     <div className="flex flex-col items-center justify-center text-center p-4">
       <h1 className="text-4xl font-bold text-white mt-1">
         Memory Matching Game
       </h1>
+      <h2 className="text-white text-3xl">
+      winner Is: {winner ? winner.email : "No winner "}
+     </h2>
+      <h2 className="text-white text-3xl">
+      Welcome, {currentUser?.username}
+     </h2>
 
- {!LoggedIn ? (
+      <h2 className="text-white text-5xl pt-5">Score : {score}</h2>
 
+{!LoggedIn ? (
   <div className="wrap border-2 border-white p-10 mt-20 rounded-b-2xl">
 
     <h1 className="text-white p-2 text-4xl">
-      Login
+      {isRegister ? "Register" : "Login"}
     </h1>
 
     <div className="loginpane flex flex-col">
 
+      {/* Username only for Register */}
+      {isRegister && (
+        <input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
+          type="text"
+          placeholder="Username"
+        />
+      )}
 
+      {/* Email */}
       <input
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="border-white border-4 rounded-3xl mt-10 p-3 text-2xl text-white"
+        className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
         type="email"
-        placeholder="Ex@gmail.com"
+        placeholder="Email"
       />
 
-
+      {/* Password */}
       <div className="relative">
 
         <input
@@ -204,7 +336,7 @@ const handleLogout = () => {
 
         <i
           onClick={() => setHide(!hide)}
-          className={`text-4xl absolute sm:left-[80%] sm:top-[40%]  top-[40%] left-[80%] text-white cursor-pointer ${
+          className={`text-4xl absolute sm:left-[80%] sm:top-[40%] top-[40%] left-[80%] text-white cursor-pointer ${
             hide
               ? "ri-eye-fill"
               : "ri-eye-off-fill"
@@ -215,37 +347,46 @@ const handleLogout = () => {
 
     </div>
 
-
+    {/* Main button */}
     <button
-      onClick={handleLogin}
+      onClick={
+        isRegister
+          ? handleRegister
+          : handleLogin
+      }
       className="w-40 h-14 mt-5 rounded-full bg-white hover:bg-gray-200 text-xl text-black font-bold cursor-pointer transition"
     >
-      {LoggedIn === true ? "logout" : "Login"}
+      {isRegister ? "Register" : "Login"}
     </button>
 
-  </div>
-
-) : (
-
-
-  <div className="mt-20">
-
-    <h2 className="text-white text-3xl font-bold mb-5">
-      Welcome, {email}
-    </h2>
-
-    <button
-      onClick={handleLogout}
-      className="w-40 h-14 rounded-full bg-red-500 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
+    {/* Switch Login/Register */}
+    <p
+      className="text-white mt-5 cursor-pointer underline"
+      onClick={() => {
+        setIsRegister(!isRegister);
+        setPassword("");
+      }}
     >
-      Logout
-    </button>
+      {isRegister
+        ? "Already have an account? Login"
+        : "Don't have an account? Register"}
+    </p>
 
   </div>
+) : (
+        <div className="mt-20">
+          <h2 className="text-white text-3xl font-bold mb-5">
+            Welcome, {email}
+          </h2>
 
-)}
-
-
+          <button
+            onClick={handleLogout}
+            className="w-40 h-14 rounded-full bg-red-500 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
+          >
+            Logout
+          </button>
+        </div>
+      )}
 
       {isWon && (
         <h2 className="text-3xl text-green-400 font-bold mt-4">
