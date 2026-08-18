@@ -5,7 +5,7 @@ const PORT = 3000;
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://YOUR-FRONTEND.vercel.app"
+    "https://flipthe-game.vercel.app"
   ]
 }));
 app.use(express.json());

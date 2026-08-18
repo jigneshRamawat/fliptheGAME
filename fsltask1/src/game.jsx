@@ -46,7 +46,7 @@ const [LoggedIn, setLoggedIn] = useState(false);
 
 const handleLogin =async ()=>{
   try{
-    const resp = await axios.post("http://localhost:3000/login",{email: email, password:password});
+    const resp = await axios.post("https://flipthegame.onrender.com/login",{email: email, password:password});
     console.log(resp)
     setLoggedIn(true);
     alert(resp.data.message); 
