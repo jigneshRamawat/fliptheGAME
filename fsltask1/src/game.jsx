@@ -45,16 +45,16 @@ const [LoggedIn, setLoggedIn] = useState(false);
 
 
 const handleLogin =async ()=>{
-   
   try{
     const resp = await axios.post("http://localhost:3000/login",{email: email, password:password});
-    console.log(resp.data)
-    alert("Login successful");
-    setLoggedIn(true)
+    console.log(resp)
+    setLoggedIn(true);
+    alert(resp.data.message); 
     startGame();
-  }catch{
+  }catch(error){
     console.error("Login error:", error);
     setLoggedIn(false)
+    alert(error.response?.data?.message);
   }
 }
 
