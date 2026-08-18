@@ -35,6 +35,9 @@ function Game() {
 
   const [isWon, setIsWon] = useState(false);
 
+
+  const [hide, setHide] = useState(false);
+
   const startGame = () => {
     setCards(createCards());
 
@@ -128,12 +131,37 @@ function Game() {
         Memory Matching Game
       </h1>
 
+     <div className="wrap border-2 border-white  p-10 mt-20 rounded-b-2xl">
+      <h1 className="text-white p-2 text-4xl">Login </h1>
+      
+      <div className="loginpane flex flex-col ">
+      <input className="border-white border-4 rounded-3xl mt-10 p-3  text-2xl text-white " type="email" placeholder="Ex@gmail.com"/>
+     <div className="retative">
+    
+  <input
+    className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
+    type={hide ? "password" : "text"}
+    placeholder="***124"
+  />
+  <i
+    onClick={() => setHide(!hide)}
+    className={`text-4xl absolute top-[46%] left-[56%] text-white cursor-pointer ${
+      hide ? "ri-eye-fill" : "ri-eye-off-fill"
+    }`}
+  ></i>
+     </div>
+     </div>
+
       <button
         onClick={startGame}
-        className="w-40 h-14 mt-5 rounded-full bg-white hover:bg-gray-200 text-xl text-black font-bold cursor-pointer transition"
-      >
-        {start ? "Restart" : "Start"}
+        className="w-40 h-14 mt-5 rounded-full bg-white hover:bg-gray-200 text-xl text-black font-bold cursor-pointer transition" >
+        {start ? "Restart" : "Login"}
       </button>
+
+
+      </div>  
+
+
 
       {isWon && (
         <h2 className="text-3xl text-green-400 font-bold mt-4">
