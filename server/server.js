@@ -9,7 +9,7 @@ app.use(express.json());
 const data = [
     {
         email: "jignesh@gmail.com",
-        password:"1234ABC",
+        password:"123",
     },
 ]
 
