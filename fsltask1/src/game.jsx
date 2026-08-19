@@ -274,13 +274,13 @@ function Game() {
         Quickest  {winner ?  winner.time : "No winner "} <span className="text-yellow-200 lowercase text-sm">s</span>  By {winner ? winner.username : "No winner"}
              </h2>
       </div>
-      <h1 className="text-4xl font-bold text-white mt-1">
+      <h1 className="text-3xl font-bold text-white mt-1">
         Memory Matching Game
       </h1>
 
-      <h2 className="text-white text-3xl mt-5 capitalize">{have} {currentUser?.username}</h2>
+      <h2 className="text-white text-xl mt-2 capitalize">{have} {currentUser?.username}</h2>
 
-      <h2 className="text-white text-5xl pt-5">Score : {score}</h2>
+      <h2 className="text-white text-2xl pt-3">Score : {score}</h2>
 
       {!LoggedIn ? (
         <div className="wrap border-2 border-white p-10 mt-20 rounded-b-2xl">
@@ -333,18 +333,18 @@ function Game() {
           </p>
         </div>
       ) : (
-        <div className="mt-20">
+        <div className="mt-2">
 
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-5">
             <button
               onClick={()=>startGame()}
-              className="w-40  h-14 rounded-full bg-red-900 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
+              className="w-30  h-8 rounded-full bg-red-900 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
             >
               Restart
             </button>
             <button
               onClick={handleLogout}
-              className="w-40 h-14 rounded-full bg-red-500 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
+              className="w-30 h-8 rounded-full bg-red-500 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
             >
               Logout
             </button>
@@ -365,13 +365,13 @@ function Game() {
       )}
 
       {(start || isWon) && (
-        <div className="w-full px-4 sm:px-6 lg:px-10 mt-6">
+        <div className="w-full px-4 sm:px-6 lg:px-10 mt-2">
           <div className="flex justify-center gap-8 mb-4">
             <h2 className="text-2xl font-bold text-white">Time: {timeLeft}s</h2>
             <h2 className="text-2xl font-bold text-white">Score: {score}</h2>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 max-w-lg mx-auto">
             {cards.map((card) => {
               const isOpen =
                 card.id === firstCard?.id ||
