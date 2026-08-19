@@ -32,176 +32,148 @@ function Game() {
   const [isWon, setIsWon] = useState(false);
   const [hide, setHide] = useState(false);
 
-const [email, setEmail] = useState("");
-const [username, setUsername] = useState("");
-const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [LoggedIn, setLoggedIn] = useState(false);
-  const [winner , setWinner] = useState(null)
+  const [winner, setWinner] = useState(null);
   const [isRegister, setIsRegister] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  
-  
+
   const API_URL = "https://flipthegame.onrender.com";
 
   const handleLogin = async () => {
-     try{
-
-      const resp = await axios.post(`${API_URL}/login`,{email,password})
+    try {
+      const resp = await axios.post(`${API_URL}/login`, { email, password });
 
       console.log("login", resp.data);
       setLoggedIn(true);
-      localStorage.setItem(
-        "UserLogindata",
-        JSON.stringify(resp.data.user)
-      )
+      localStorage.setItem("UserLogindata", JSON.stringify(resp.data.user));
       alert(resp.data.message);
       setCurrentUser(resp.data.user);
       startGame();
-      
-    
-    }catch(error){
-       console.error("Login error:", error);
+    } catch (error) {
+      console.error("Login error:", error);
 
-    setLoggedIn(false);
+      setLoggedIn(false);
 
-    alert(
-      error.response?.data?.message ||
-      "Login failed"
-    );
-     }
+      alert(error.response?.data?.message || "Login failed");
+    }
   };
 
   useEffect(() => {
-  const savedUser = localStorage.getItem("UserLogindata");
+    const savedUser = localStorage.getItem("UserLogindata");
 
-  if (savedUser) {
-    const user = JSON.parse(savedUser);
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
 
-    setCurrentUser(user);
-    setLoggedIn(true);
-  }
-
-  howWin();
-}, []);
-
-
-  const handleRegister = async()=>{
-    try{
-      const resp = await axios.post(`${API_URL}/register`, {
-        email,
-      username,
-      password,
-      })
-
-      console.log("Register response:", resp.data);
-       alert(resp.data.message);
-
-    setIsRegister(false);
-    setPassword("");
-    }catch(error){
-        console.error("Register error:", error);
-
-    alert(
-      error.response?.data?.message ||
-      "Registration failed"
-    );
+      setCurrentUser(user);
+      setLoggedIn(true);
     }
-  }
-
-
-
-const setScoreinbackend = async (quickwon, finalScore) => {
-  try {
-    const userData = JSON.parse(localStorage.getItem("UserLogindata"));
-    const userid = userData.id;
-     console.log(userid,"userid.....") 
-    const resp = await axios.put(
-      `${API_URL}/score/${userid}`,
-      {
-        score: finalScore,
-        time: quickwon,
-      }
-    );
-
-    console.log("Backend score:", resp.data.user);
-
-    setCurrentUser(resp.data.user);
 
     howWin();
+  }, []);
 
-  } catch (error) {
-    console.error("Score error:", error);
-  }
-};
+  const handleRegister = async () => {
+    try {
+      const resp = await axios.post(`${API_URL}/register`, {
+        email,
+        username,
+        password,
+      });
 
-const howWin = async () => {
-  try {
-    const res = await axios.get(`${API_URL}/data`);
-    const players = res.data.data;
-    console.log(players)
+      console.log("Register response:", resp.data);
+      alert(resp.data.message);
 
-    if (players.length === 0) {
-      console.log("No players found");
-      return;
+      setIsRegister(false);
+      setPassword("");
+    } catch (error) {
+      console.error("Register error:", error);
+
+      alert(error.response?.data?.message || "Registration failed");
     }
+  };
 
-    const winner = players.reduce((best, player) => {
-      if (player.score > best.score) {
-        return player;
+  const setScoreinbackend = async (quickwon, finalScore) => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("UserLogindata"));
+      const userid = userData.id;
+      console.log(userid, "userid.....");
+      const resp = await axios.put(`${API_URL}/score/${userid}`, {
+        score: finalScore,
+        time: quickwon,
+      });
+
+      console.log("Backend score:", resp.data.user);
+
+      setCurrentUser(resp.data.user);
+
+      howWin();
+    } catch (error) {
+      console.error("Score error:", error);
+    }
+  };
+
+  const howWin = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/data`);
+      const players = res.data.data;
+      console.log(players);
+
+      if (players.length === 0) {
+        console.log("No players found");
+        return;
       }
-      if (
-        player.score === best.score &&
-        player.time < best.time
-      ) {
-        return player;
-      }
-      return best;
-    });
-    setWinner(winner)
-    console.log("Winner:", winner);
 
-  } catch (err) {
-    console.error("Error:", err);
-  }
-};
+      const winner = players.reduce((best, player) => {
+        if (player.score > best.score) {
+          return player;
+        }
+        if (player.score === best.score && player.time < best.time) {
+          return player;
+        }
+        return best;
+      });
+      setWinner(winner);
+      console.log("Winner:", winner);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
 
+  // const settimeinbackend = async(quickWon)=>{
+  //   try{
+  //        const resp = await axios.post("http://localhost:3000/time",{
+  //         time: quickWon,
+  //        });
 
+  //   }catch(err){
+  //     console.log(err)
+  //   }
 
+  // }
+  const handleLogout = () => {
+    setLoggedIn(false);
 
-// const settimeinbackend = async(quickWon)=>{
-//   try{
-//        const resp = await axios.post("http://localhost:3000/time",{
-//         time: quickWon,
-//        });
+    setCurrentUser(null);
 
-//   }catch(err){
-//     console.log(err)
-//   }
+    localStorage.removeItem("user");
 
-// }
-const handleLogout = () => {
+    setStart(false);
+    setCards([]);
+    setFirstCard(null);
+    setSecondCard(null);
+    setScore(0);
+    setTimeLeft(60);
+    setGameOver(false);
+    setIsWon(false);
 
-  setLoggedIn(false);
+    setEmail("");
+    setUsername("");
+    setPassword("");
 
-  setCurrentUser(null);
-
-  localStorage.removeItem("user");
-
-  setStart(false);
-  setCards([]);
-  setFirstCard(null);
-  setSecondCard(null);
-  setScore(0);
-  setTimeLeft(60);
-  setGameOver(false);
-  setIsWon(false);
-
-  setEmail("");
-  setUsername("");
-  setPassword("");
-
-  alert("Logged out successfully");
-};
+    alert("Logged out successfully");
+  };
 
   const startGame = () => {
     setCards(createCards());
@@ -223,7 +195,7 @@ const handleLogout = () => {
     if (timeLeft <= 0) {
       setGameOver(true);
       setStart(false);
-     setScoreinbackend(60 - timeLeft, score);
+      setScoreinbackend(60 - timeLeft, score);
       return;
     }
     const timer = setInterval(() => {
@@ -262,7 +234,7 @@ const handleLogout = () => {
         if (newScore === images.length) {
           setIsWon(true);
           const time = 60 - timeLeft;
-          setScoreinbackend(time,newScore);
+          setScoreinbackend(time, newScore);
           setStart(false);
         }
         return newScore;
@@ -283,113 +255,107 @@ const handleLogout = () => {
     setDisabled(false);
   };
 
-  
-
   return (
     <div className="flex flex-col items-center justify-center text-center p-4">
+      <div className="flex bg-red-950 border-5 border-dotted items-center  overflow-hidden border-white rounded-full  w-40 h-40 absolute right-10 top-10">
+              <h2 className="text-white uppercase text-xl p-5">
+        Top Score  {winner ?  winner.time : "No winner "} By {winner ? winner.username : "No winner"}
+             </h2>
+      </div>
       <h1 className="text-4xl font-bold text-white mt-1">
         Memory Matching Game
       </h1>
-      <h2 className="text-yellow-200 uppercase text-5xl p-5">
-      Top Score : {winner ? winner.username : "No winner "}
-     </h2>
-      <h2 className="text-white text-3xl">
-      Welcome, {currentUser?.username}
-     </h2>
+
+      <h2 className="text-white text-3xl mt-5 capitalize">Welcome {currentUser?.username}</h2>
 
       <h2 className="text-white text-5xl pt-5">Score : {score}</h2>
 
-{!LoggedIn ? (
-  <div className="wrap border-2 border-white p-10 mt-20 rounded-b-2xl">
+      {!LoggedIn ? (
+        <div className="wrap border-2 border-white p-10 mt-20 rounded-b-2xl">
+          <h1 className="text-white p-2 text-4xl">
+            {isRegister ? "Register" : "Login"}
+          </h1>
 
-    <h1 className="text-white p-2 text-4xl">
-      {isRegister ? "Register" : "Login"}
-    </h1>
+          <div className="loginpane flex flex-col">
+            {/* Username only for Register */}
+            {isRegister && (
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
+                type="text"
+                placeholder="Username"
+              />
+            )}
 
-    <div className="loginpane flex flex-col">
+            {/* Email */}
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
+              type="email"
+              placeholder="Email"
+            />
 
-      {/* Username only for Register */}
-      {isRegister && (
-        <input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
-          type="text"
-          placeholder="Username"
-        />
-      )}
+            {/* Password */}
+            <div className="relative">
+              <input
+                className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
+                type={hide ? "password" : "text"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-      {/* Email */}
-      <input
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
-        type="email"
-        placeholder="Email"
-      />
+              <i
+                onClick={() => setHide(!hide)}
+                className={`text-4xl absolute sm:left-[80%] sm:top-[40%] top-[40%] left-[80%] text-white cursor-pointer ${
+                  hide ? "ri-eye-fill" : "ri-eye-off-fill"
+                }`}
+              ></i>
+            </div>
+          </div>
 
-      {/* Password */}
-      <div className="relative">
+          {/* Main button */}
+          <button
+            onClick={isRegister ? handleRegister : handleLogin}
+            className="w-40 h-14 mt-5 rounded-full bg-white hover:bg-gray-200 text-xl text-black font-bold cursor-pointer transition"
+          >
+            {isRegister ? "Register" : "Login"}
+          </button>
 
-        <input
-          className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
-          type={hide ? "password" : "text"}
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <i
-          onClick={() => setHide(!hide)}
-          className={`text-4xl absolute sm:left-[80%] sm:top-[40%] top-[40%] left-[80%] text-white cursor-pointer ${
-            hide
-              ? "ri-eye-fill"
-              : "ri-eye-off-fill"
-          }`}
-        ></i>
-
-      </div>
-
-    </div>
-
-    {/* Main button */}
-    <button
-      onClick={
-        isRegister
-          ? handleRegister
-          : handleLogin
-      }
-      className="w-40 h-14 mt-5 rounded-full bg-white hover:bg-gray-200 text-xl text-black font-bold cursor-pointer transition"
-    >
-      {isRegister ? "Register" : "Login"}
-    </button>
-
-    {/* Switch Login/Register */}
-    <p
-      className="text-white mt-5 cursor-pointer underline"
-      onClick={() => {
-        setIsRegister(!isRegister);
-        setPassword("");
-      }}
-    >
-      {isRegister
-        ? "Already have an account? Login"
-        : "Don't have an account? Register"}
-    </p>
-
-  </div>
-) : (
+          {/* Switch Login/Register */}
+          <p
+            className="text-white mt-5 cursor-pointer underline"
+            onClick={() => {
+              setIsRegister(!isRegister);
+              setPassword("");
+            }}
+          >
+            {isRegister
+              ? "Already have an account? Login"
+              : "Don't have an account? Register"}
+          </p>
+        </div>
+      ) : (
         <div className="mt-20">
           <h2 className="text-white text-3xl font-bold mb-5">
             Welcome, {email}
           </h2>
-
-          <button
-            onClick={handleLogout}
-            className="w-40 h-14 rounded-full bg-red-500 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
-          >
-            Logout
-          </button>
+          <div className="flex flex-col gap-10">
+            <button
+              onClick={()=>startGame()}
+              className="w-40  h-14 rounded-full bg-red-900 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
+            >
+              Restart
+            </button>
+            <button
+              onClick={handleLogout}
+              className="w-40 h-14 rounded-full bg-red-500 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       )}
 
