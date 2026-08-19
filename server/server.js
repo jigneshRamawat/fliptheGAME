@@ -3,10 +3,11 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
-
+import jwt from "jsonwebtoken"
 import User from "./Mofule/User.js";
 
 dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -66,6 +67,7 @@ app.post("/register", async (req, res) => {
   });
 });
 
+
 // const data = [
 //   {
 //     email: "jignesh@gmail.com",
@@ -87,9 +89,16 @@ app.post("/login", async (req, res) => {
       res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const isFirstLogin = user.lastLogin === null;
+    const isFirstLogin = user.lastLogin === null; 
     user.lastLogin = new Date();
+
+
     await user.save();
+    
+    const createJWT = jwt.sign({keyvalue:user.email},"qwertyuiop",{expiresIn:"7d",});
+console.log(process.env.SEC_JWT);
+
+
     return res.status(200).json({
       message: isFirstLogin ? "Welcome " : "Welcome back ",
 
@@ -99,6 +108,7 @@ app.post("/login", async (req, res) => {
         username: user.username,
         score: user.score,
         time: user.time,
+        token:createJWT,
       },
     });
   } catch (error) {
@@ -115,32 +125,32 @@ app.put("/score/:id", async (req, res) => {
     const { score, time } = req.body;
     const { id } = req.params;
 
-    // const user = await User.findOne({ email });
-
     const user = await User.findById(id);
+
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
 
-    user.score = Math.max(user.score, score);
+    if (Number(score) > Number(user.score)) {
+      user.score = Number(score);
+      user.time = Number(time);
 
-    if (user.time === 0) {
-      user.time = time;
-    } else {
-      user.time = Math.min(user.time, time);
+      await user.save();
     }
-
-    await user.save();
 
     res.status(200).json({
-      message: "Score updated",
+      message: "Score checked",
       user: {
+        id: user._id,
         email: user.email,
         username: user.username,
         score: user.score,
         time: user.time,
       },
     });
+
   } catch (error) {
     console.log("Score error:", error);
 
