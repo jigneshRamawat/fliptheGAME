@@ -147,6 +147,7 @@ function Game() {
         }
         return best;
       });
+      setScore(winner.score)
       setWinner(winner);
       console.log("Winner:", winner);
     } catch (err) {
