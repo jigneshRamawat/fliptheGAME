@@ -283,12 +283,14 @@ const handleLogout = () => {
     setDisabled(false);
   };
 
+  
+
   return (
     <div className="flex flex-col items-center justify-center text-center p-4">
       <h1 className="text-4xl font-bold text-white mt-1">
         Memory Matching Game
       </h1>
-      <h2 className="text-yellow-200 text-5xl p-5">
+      <h2 className="text-yellow-200 uppercase text-5xl p-5">
       Top Score : {winner ? winner.username : "No winner "}
      </h2>
       <h2 className="text-white text-3xl">
