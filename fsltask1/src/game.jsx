@@ -63,6 +63,7 @@ function Game() {
       localStorage.setItem("UserLogindata", JSON.stringify(resp.data.user));
       alert(resp.data.message);
       setHave(resp.data.message)
+      setScore(resp.data.score)
       setCurrentUser(resp.data.user);
       startGame();
     } catch (error) {
