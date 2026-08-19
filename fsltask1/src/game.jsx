@@ -12,7 +12,7 @@ import img08 from "../src/img/img8.jpg";
 
 import imgQ from "../src/img/mark.jpg";
 
-const images = [img1, img2, img3, img4, img05,img06, img07 ,img08];
+const images = [img1, img2, img3, img4, img05, img06, img07, img08];
 const l = images.length;
 const createCards = () => {
   const cards = [...images, ...images];
@@ -46,24 +46,23 @@ function Game() {
   const [isRegister, setIsRegister] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const[have, setHave] = useState("")
+  const [have, setHave] = useState("");
 
   const API_URL = "https://flipthegame.onrender.com";
   // const API_URL = "http://localhost:3000";
 
-
   const handleLogin = async () => {
     try {
       const resp = await axios.post(`${API_URL}/login`, { email });
-      
+
       console.log("login", resp.data);
-      
+
       setLoggedIn(true);
-      
+
       localStorage.setItem("UserLogindata", JSON.stringify(resp.data.user));
       alert(resp.data.message);
-      setHave(resp.data.message)
-      setScore(resp.data.score)
+      setHave(resp.data.message);
+      setScore(resp.data.score);
       setCurrentUser(resp.data.user);
       startGame();
     } catch (error) {
@@ -147,7 +146,6 @@ function Game() {
         }
         return best;
       });
-      setScore(winner.score)
       setWinner(winner);
       console.log("Winner:", winner);
     } catch (err) {
@@ -198,9 +196,7 @@ function Game() {
     setSecondCard(null);
     setDisabled(false);
     setGameOver(false);
-
     setIsWon(false);
-    howWin();
   };
 
   useEffect(() => {
@@ -272,15 +268,22 @@ function Game() {
   return (
     <div className="flex flex-col items-center justify-center text-center p-4">
       <div className="flex bg-red-950 border-5 border-dotted items-center  overflow-hidden border-white rounded-full  w-40 h-40 absolute right-10 top-15">
-              <h2 className="text-white uppercase text-sm font-bold space-x-1.5 p-5">
-        Top Score <br /> {score} / {l} in  {winner ?  winner.time : "No winner "} <span className="text-yellow-200 lowercase text-sm">s</span> Done By {winner ? winner.username : "No winner"}
-             </h2>
+        <h2 className="text-white uppercase text-sm font-bold space-x-1.5 p-5">
+          Top Score <br />
+          {winner ? winner.score : 0} / {l}
+          in {winner ? winner.time : "No winner"}
+          <span className="text-yellow-200 lowercase text-sm">s</span>
+          <br />
+          Done By {winner ? winner.username : "No winner"}
+        </h2>
       </div>
       <h1 className="text-3xl font-bold text-white mt-1">
         Memory Matching Game
       </h1>
 
-      <h2 className="text-white text-xl mt-2 capitalize">{have} {currentUser?.username}</h2>
+      <h2 className="text-white text-xl mt-2 capitalize">
+        {have} {currentUser?.username}
+      </h2>
 
       <h2 className="text-white text-2xl pt-3">Score : {score}</h2>
 
@@ -310,7 +313,6 @@ function Game() {
               type="email"
               placeholder="Email"
             />
-
           </div>
 
           {/* Main button */}
@@ -336,10 +338,9 @@ function Game() {
         </div>
       ) : (
         <div className="mt-2">
-
           <div className="flex flex-col gap-5">
             <button
-              onClick={()=>startGame()}
+              onClick={() => startGame()}
               className="w-30  h-8 rounded-full bg-red-900 hover:bg-red-600 text-xl text-white font-bold cursor-pointer transition"
             >
               Restart
