@@ -48,8 +48,8 @@ function Game() {
 
   const[have, setHave] = useState("")
 
-  // const API_URL = "https://flipthegame.onrender.com";
-  const API_URL = "http://localhost:3000";
+  const API_URL = "https://flipthegame.onrender.com";
+  // const API_URL = "http://localhost:3000";
 
 
   const handleLogin = async () => {
