@@ -83,6 +83,8 @@ const [password, setPassword] = useState("");
 
   howWin();
 }, []);
+
+
   const handleRegister = async()=>{
     try{
       const resp = await axios.post(`${API_URL}/register`, {
@@ -110,17 +112,18 @@ const [password, setPassword] = useState("");
 
 const setScoreinbackend = async (quickwon, finalScore) => {
   try {
-
-    const resp = await axios.post(
-      `${API_URL}/score`,
+    const userData = JSON.parse(localStorage.getItem("UserLogindata"));
+    const userid = userData.id;
+     console.log(userid,"userid.....") 
+    const resp = await axios.put(
+      `${API_URL}/score/${userid}`,
       {
-        email: currentUser?.email,
         score: finalScore,
         time: quickwon,
       }
     );
 
-    console.log("Backend score:", resp.data);
+    console.log("Backend score:", resp.data.user);
 
     setCurrentUser(resp.data.user);
 

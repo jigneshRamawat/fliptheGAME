@@ -120,14 +120,19 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/score", async (req, res) => {
+app.put("/score/:id", async (req, res) => {
   try {
-    const { email, score, time } = req.body;
-    const user = await User.findOne({ email });
+    const { score, time } = req.body;
+    const {id} = req.params;
+
+    // const user = await User.findOne({ email });
+
+    const user = await User.findById(id)
     if (!user) {
-      res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
+    
     user.score = Math.max(user.score, score);
 
     if (user.time === 0) {

@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import Game from './game.jsx'
 import 'remixicon/fonts/remixicon.css'
+// import Test from '../src/testGmae.jsx'
 
 
 createRoot(document.getElementById('root')).render(
