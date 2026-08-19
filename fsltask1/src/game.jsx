@@ -13,7 +13,7 @@ import img08 from "../src/img/img8.jpg";
 import imgQ from "../src/img/mark.jpg";
 
 const images = [img1, img2, img3, img4, img05,img06, img07 ,img08];
-
+const l = images.length;
 const createCards = () => {
   const cards = [...images, ...images];
 
@@ -272,8 +272,8 @@ function Game() {
   return (
     <div className="flex flex-col items-center justify-center text-center p-4">
       <div className="flex bg-red-950 border-5 border-dotted items-center  overflow-hidden border-white rounded-full  w-40 h-40 absolute right-10 top-15">
-              <h2 className="text-white uppercase text-xl p-5">
-        Best Score : {score} in  {winner ?  winner.time : "No winner "} <span className="text-yellow-200 lowercase text-sm">s</span>  By {winner ? winner.username : "No winner"}
+              <h2 className="text-white uppercase text-sm font-bold space-x-1.5 p-5">
+        Top Score <br /> {score} / {l} in  {winner ?  winner.time : "No winner "} <span className="text-yellow-200 lowercase text-sm">s</span> Done By {winner ? winner.username : "No winner"}
              </h2>
       </div>
       <h1 className="text-3xl font-bold text-white mt-1">
