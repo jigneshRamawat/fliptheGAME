@@ -4,9 +4,15 @@ import img1 from "../src/img/quiz1.jpg";
 import img2 from "../src/img/quiz2.jpg";
 import img3 from "../src/img/quiz3.jpg";
 import img4 from "../src/img/quiz4.jpg";
+
+import img05 from "../src/img/img5.jpg";
+import img06 from "../src/img/img6.html";
+import img07 from "../src/img/img7.jpg";
+import img08 from "../src/img/img8.jpg";
+
 import imgQ from "../src/img/mark.jpg";
 
-const images = [img1, img2, img3, img4];
+const images = [img1, img2, img3, img4, img05,img06, img07 ,img08];
 
 const createCards = () => {
   const cards = [...images, ...images];
@@ -206,7 +212,7 @@ function Game() {
     }
     const timer = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
-    }, 1000);
+    }, 500);
     return () => clearInterval(timer);
   }, [start, gameOver, isWon, timeLeft]);
   const handleCardClick = (card) => {
