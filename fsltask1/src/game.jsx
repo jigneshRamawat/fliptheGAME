@@ -178,7 +178,7 @@ function Game() {
     setUsername("");
     setPassword("");
 
-    alert("Logged out successfully");
+    alert("You Want Logout");
   };
 
   const startGame = () => {
@@ -263,7 +263,7 @@ function Game() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center p-4">
-      <div className="flex bg-red-950 border-5 border-dotted items-center  overflow-hidden border-white rounded-full  w-40 h-40 absolute right-10 top-10">
+      <div className="flex bg-red-950 border-5 border-dotted items-center  overflow-hidden border-white rounded-full  w-40 h-40 absolute right-10 top-15">
               <h2 className="text-white uppercase text-xl p-5">
         Quickest  {winner ?  winner.time : "No winner "} <span className="text-yellow-200 lowercase text-sm">s</span>  By {winner ? winner.username : "No winner"}
              </h2>
