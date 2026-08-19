@@ -339,9 +339,7 @@ function Game() {
         </div>
       ) : (
         <div className="mt-20">
-          <h2 className="text-white text-3xl font-bold mb-5">
-            Welcome, {email}
-          </h2>
+
           <div className="flex flex-col gap-10">
             <button
               onClick={()=>startGame()}
