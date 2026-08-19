@@ -288,8 +288,8 @@ const handleLogout = () => {
       <h1 className="text-4xl font-bold text-white mt-1">
         Memory Matching Game
       </h1>
-      <h2 className="text-white text-3xl">
-      winner Is: {winner ? winner.email : "No winner "}
+      <h2 className="text-yellow-200 text-5xl p-5">
+      Top Score : {winner ? winner.username : "No winner "}
      </h2>
       <h2 className="text-white text-3xl">
       Welcome, {currentUser?.username}
