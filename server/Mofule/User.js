@@ -17,10 +17,10 @@ const userSchem = new mongoose.Schema(
       trim: true,
     },
 
-    password: {
-      type: String,
-      required: true,
-    },
+    // password: {
+    //   type: String,
+    //   required: true,
+    // },
 
     score: {
       type: Number,
@@ -31,12 +31,15 @@ const userSchem = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-
-const User = mongoose.model("UserFlipGameRegister", userSchem)
+const User = mongoose.model("UserFlipGameRegister", userSchem);
 export default User;

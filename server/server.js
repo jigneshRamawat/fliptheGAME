@@ -28,12 +28,10 @@ mongoose
   });
 
 app.post("/register", async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, username } = req.body;
 
-  if (!email || !username || !password) {
-    return res
-      .status(400)
-      .json({ message: "Email, username and password are required" });
+  if (!email || !username) {
+    return res.status(400).json({ message: "Email, username  are required" });
   }
 
   const existingEmail = await User.findOne({ email });
@@ -51,12 +49,9 @@ app.post("/register", async (req, res) => {
     });
   }
 
-  const hashPassword = await bcrypt.hash(password, 10);
-
   const createUser = await User.create({
     email,
     username,
-    password: hashPassword,
     score: 0,
     time: 0,
   });
@@ -86,22 +81,17 @@ app.get("/", (req, res) => {
 
 app.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const comparepassword = await bcrypt.compare(password, user.password);
-
-    if (!comparepassword) {
-      return res.status(401).json({
-        message: "Invalid credentials",
-      });
-    }
-
+    const isFirstLogin = user.lastLogin === null;
+    user.lastLogin = new Date();
+    await user.save();
     return res.status(200).json({
-      message: "login success",
+      message: isFirstLogin ? "Welcome " : "Welcome back ",
 
       user: {
         id: user._id,
@@ -123,16 +113,15 @@ app.post("/login", async (req, res) => {
 app.put("/score/:id", async (req, res) => {
   try {
     const { score, time } = req.body;
-    const {id} = req.params;
+    const { id } = req.params;
 
     // const user = await User.findOne({ email });
 
-    const user = await User.findById(id)
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    
     user.score = Math.max(user.score, score);
 
     if (user.time === 0) {
@@ -140,7 +129,6 @@ app.put("/score/:id", async (req, res) => {
     } else {
       user.time = Math.min(user.time, time);
     }
-
 
     await user.save();
 
@@ -170,7 +158,7 @@ app.put("/score/:id", async (req, res) => {
 //     data: data,
 //   });
 // });
-// 
+//
 app.get("/data", async (req, res) => {
   try {
     const users = await User.find().select("-password");

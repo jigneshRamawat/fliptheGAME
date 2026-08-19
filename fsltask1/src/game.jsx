@@ -40,16 +40,23 @@ function Game() {
   const [isRegister, setIsRegister] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
+  const[have, setHave] = useState("")
+
   const API_URL = "https://flipthegame.onrender.com";
+  // const API_URL = "http://localhost:3000";
+
 
   const handleLogin = async () => {
     try {
-      const resp = await axios.post(`${API_URL}/login`, { email, password });
-
+      const resp = await axios.post(`${API_URL}/login`, { email });
+      
       console.log("login", resp.data);
+      
       setLoggedIn(true);
+      
       localStorage.setItem("UserLogindata", JSON.stringify(resp.data.user));
       alert(resp.data.message);
+      setHave(resp.data.message)
       setCurrentUser(resp.data.user);
       startGame();
     } catch (error) {
@@ -79,7 +86,6 @@ function Game() {
       const resp = await axios.post(`${API_URL}/register`, {
         email,
         username,
-        password,
       });
 
       console.log("Register response:", resp.data);
@@ -266,7 +272,7 @@ function Game() {
         Memory Matching Game
       </h1>
 
-      <h2 className="text-white text-3xl mt-5 capitalize">Welcome {currentUser?.username}</h2>
+      <h2 className="text-white text-3xl mt-5 capitalize">{have} {currentUser?.username}</h2>
 
       <h2 className="text-white text-5xl pt-5">Score : {score}</h2>
 
@@ -297,23 +303,6 @@ function Game() {
               placeholder="Email"
             />
 
-            {/* Password */}
-            <div className="relative">
-              <input
-                className="border-white border-4 rounded-3xl mt-5 p-3 text-2xl text-white"
-                type={hide ? "password" : "text"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-
-              <i
-                onClick={() => setHide(!hide)}
-                className={`text-4xl absolute sm:left-[80%] sm:top-[40%] top-[40%] left-[80%] text-white cursor-pointer ${
-                  hide ? "ri-eye-fill" : "ri-eye-off-fill"
-                }`}
-              ></i>
-            </div>
           </div>
 
           {/* Main button */}
