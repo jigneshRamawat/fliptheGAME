@@ -133,14 +133,22 @@ app.put("/score/:id", async (req, res) => {
       });
     }
 
-    if (Number(score) > Number(user.score)) {
-      user.score = Number(score);
+    const currentScore = Number(score);
+    const oldScore = Number(user.score || 0);
+
+    // Only update if new score is higher
+    if (currentScore > oldScore) {
+      user.score = currentScore;
       user.time = Number(time);
 
       await user.save();
+
+      console.log("New high score saved:", currentScore);
+    } else {
+      console.log("Old high score kept:", oldScore);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Score checked",
       user: {
         id: user._id,
@@ -154,7 +162,7 @@ app.put("/score/:id", async (req, res) => {
   } catch (error) {
     console.log("Score error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Server error",
     });
   }
