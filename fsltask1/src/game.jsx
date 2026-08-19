@@ -6,7 +6,7 @@ import img3 from "../src/img/quiz3.jpg";
 import img4 from "../src/img/quiz4.jpg";
 
 import img05 from "../src/img/img5.jpg";
-import img06 from "../src/img/img6.html";
+import img06 from "../src/img/img6.jpg";
 import img07 from "../src/img/img7.jpg";
 import img08 from "../src/img/img8.jpg";
 
